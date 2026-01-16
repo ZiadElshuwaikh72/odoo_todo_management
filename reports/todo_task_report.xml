@@ -1,0 +1,128 @@
+<odoo>
+    <record id="todo_report" model="ir.actions.report">
+        <field name="name">To-Do Report</field>
+        <field name="model">todo.task</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="binding_model_id" ref="model_todo_task"/>
+        <field name="binding_type">report</field>
+        <field name="report_name">todo_management.todo_report_template</field>
+    </record>
+
+    <template id="todo_report_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+
+                <style>
+.timesheet-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+
+.timesheet-table th,
+.timesheet-table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+}
+
+.timesheet-table th {
+    background-color: gray;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.timesheet-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.timesheet-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.timesheet-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.timesheet-table td strong {
+    font-weight: bold;
+}
+
+.timesheet-table td[colspan="3"] {
+    text-align: right;
+}
+</style>
+
+
+
+                <t t-foreach="docs" t-as="o">
+                    <div>
+                        <p>
+                      <span style="font-weight:bold; font-size:20px;">Task : </span>
+                    <t t-esc="o.task_name"/>
+                  </p>
+                   <p>
+                    <span style="font-weight:bold; font-size:20px;">Due Date : </span>
+                        <t t-esc="o.due_date"/>
+                    </p>
+                    <p>
+                        <span style="font-weight:bold; font-size:20px;">Assign To :  </span>
+                        <span t-field="o.assign_to"/>
+
+                    </p>
+                    <p>
+                        <span style="font-weight:bold; font-size:20px;">Estimeed Time : </span>
+                       <t t-esc="o.estimated_time"/>
+                    </p>
+                    <br/>
+                    <div>
+                        <span style="font-weight:bold; font-size:20px;">Description :  </span>
+                        <t t-esc="o.description"/>
+                    </div>
+                    </div>
+
+                    <br/>
+
+                    <table class="timesheet-table">
+                        <thead>
+                            <tr><th colspan="4">TimeSheet</th></tr>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <t t-if="o.line_ids">
+                                    <t t-set="counter" t-value="0"/>
+                              <t t-foreach="o.line_ids" t-as="line" t-index="i">
+                                  <t t-set="counter" t-value="counter + 1"/>
+
+                                        <tr>
+                                            <td><t t-esc="counter"/></td>
+                                            <td><t t-esc="line.date"/></td>
+                                            <td style="text-align:left;"><t t-esc="line.description"/></td>
+                                            <td><t t-esc="line.hours"/> H</td>
+                                        </tr>
+                             </t>
+                                        <tr>
+                                            <td colspan="3" style="text-align:center;"><strong>Total Time</strong></td>
+                                            <td><strong><t t-esc="sum([line.hours for line in o.line_ids])"/> H</strong></td>
+                                        </tr>
+                          </t>
+                           <t t-else="">
+                                   <tr>
+                                       <td colspan="4" style="text-align:center;">No lines available</td>
+                                   </tr>
+                           </t>
+                        </tbody>
+                    </table>
+
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,5 +1,5 @@
 {
-    'name': "ToDo APP",
+    'name': "To-Do APP",
     'version': '17.0.0.1.0',
     'summary': 'ToDo  List Module Management',
     'author': "Ziad Ahmed",
@@ -10,9 +10,10 @@
                 ],
     'data':
         [
-         'security/ir.model.access.csv',
-        'views/base_menu.xml',
-         'views/todo_view.xml'
+        'security/ir.model.access.csv',
+         'views/base_menu.xml',
+         'views/todo_view.xml',
+        'reports/todo_task_report.xml'
 
     ],
     'assets':{
