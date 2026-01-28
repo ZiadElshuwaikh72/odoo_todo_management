@@ -26,7 +26,7 @@ class TodoTask(models.Model):
 
     active=fields.Boolean(default=True)
     is_late=fields.Boolean()
-
+    ref=fields.Char(default='New',readonly=True)
 
     @api.constrains('estimated_time','line_ids')
     def check_total_time(self):
@@ -37,7 +37,7 @@ class TodoTask(models.Model):
 
 
 
-    def actoin_new(self):
+    def action_new(self):
         for rec in self:
             print("status in new")
             rec.status = 'new'
@@ -48,7 +48,7 @@ class TodoTask(models.Model):
             print("status in in_progress")
             rec.status = 'in_progress'
 
-    def actoin_completed(self):
+    def action_completed(self):
         for rec in self:
             print("status in completed")
             rec.status = 'completed'
@@ -63,6 +63,26 @@ class TodoTask(models.Model):
         for rec in tasks_ids:
             if rec.due_date and rec.due_date<fields.date.today() and rec.status in ('new','in_progress'):
                 rec.is_late=True
+
+        # Override method create with sequence
+    def create(self,vals):
+        res=super(TodoTask,self).create(vals)
+        if res.ref =='New':
+            res.ref=self.env['ir.sequence'].next_by_code('todo_seq')
+            return res
+
+    # method relation wizard assign
+    def action_open_change_assign_wizard(self):
+         # نجمع كل السجلات الغير مسموح بها
+         invalid_tasks = self.filtered(lambda rec: rec.status not in ('new', 'in_progress'))
+         if invalid_tasks:
+             raise ValidationError(
+                 "You can't do this action. Only tasks with status 'New' or 'In Progress' can be changed.")
+         else:
+             action=self.env['ir.actions.actions']._for_xml_id('todo_management.change_assign_wizard_action')
+             action['context']={'default_task_ids':self.ids}
+             return action
+
 
 
 class TodoTaskLine(models.Model):

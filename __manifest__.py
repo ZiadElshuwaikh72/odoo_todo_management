@@ -10,10 +10,14 @@
                 ],
     'data':
         [
+            'security/security.xml',
         'security/ir.model.access.csv',
+            'data/sequence.xml',
          'views/base_menu.xml',
          'views/todo_view.xml',
+        'wizard/change_assign_to_wizard_view.xml',
         'reports/todo_task_report.xml'
+
 
     ],
     'assets':{
